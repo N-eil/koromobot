@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Idlem@ster </title>
+</head>
+<body>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="keypress.js"></script>
+<script src="musicplayer.js"></script>
+<span id='score'></span>
+<button id='reset'> Reset </button>
+<button disabled id='level'> Level up! Current level: </button>
+
+<audio id='se' hidden src=''></audio>
+
+<script type='text/javascript'>
+(function(){
+//Setup
+var listener = new window.keypress.Listener();
+var version = 1;
+
+var songs = ['chip.mp3',  'daisy.mp3',  'giovanni.mp3',  'glider.mp3',  'lavos.mp3',  'lttp.mp3',  'stampede.mp3'];
+
+var bgm = new MusicPlayer(songs);
+
+localStorage['version'] = version;
+
+var score;
+var level;
+
+function loadSettings(){
+    score = parseInt(localStorage['score'],10) || 0;
+    level = parseInt(localStorage['level'],10) || 1;
+
+    if (localStorage['bgm-on']) {
+        shop.toggleItem('BGM on', false);
+        shop.toggleItem('BGM off', true);
+        bgm.play();
+    }
+
+    $level.html('Level up! Current level: ' + level);
+    $score.html(score);
+}
+
+
+var $score = $('#score');
+var $level = $('#level');
+var canLevel = false;
+
+
+setInterval(function(){
+    score = score+level;
+    $score.html(score);
+}, 1000);
+
+// Saving
+window.onbeforeunload = function (e) {
+    localStorage['score'] = score;
+    localStorage['level'] = level;
+};
+
+// Combos
+listener.sequence_combo("d l c", function(){
+    if (!localStorage['dlc']){
+        score += 30000;
+        localStorage['dlc'] = true;
+    }
+});
+
+listener.sequence_combo("c l d", function(){
+    if (localStorage['dlc']){
+        score -= 30000;
+        delete localStorage['dlc'];
+    }
+});
+
+// Reset button
+$("#reset").on('click', function(){
+    delete localStorage['score'];
+    delete localStorage['dlc'];
+    delete localStorage['level'];
+    delete localStorage['bgm-on'];
+    level = 1;
+    score = 0;
+    $score.html(0);
+});
+
+
+//Leveling
+function setLevelTimer(delay){
+    setTimeout(function(){
+        $level.attr('disabled', false);
+        canLevel = true;
+        setTimeout(function() { $level.attr('disabled', true); canLevel = false;}, 10 * 1000);
+        setLevelTimer(1000 * (240 * Math.random() + 180));
+    }, delay);
+}
+
+setLevelTimer(1000 * (240 * Math.random() + 180));
+
+$level.on('click', function(){
+    if (!canLevel) return;
+    level += 1;
+    canLevel = false;
+    $level.attr('disabled', true);
+    $level.html('Level up! Current level: ' + level);
+});
+
+
+
+
+
+
+
+
+//Purchases
+var shop = {
+    items: {},
+    toggleItem: function(name, display){
+        if (display)
+            this.items[name].button.show();
+        else
+            this.items[name].button.hide();
+    },
+    init: function(allItems){
+        var target = $('body');
+        for (var i = 0; i < allItems.length; i++){
+            function makeItem(){
+                var buildingItem = {};
+                buildingItem.cost = allItems[i].cost;
+                buildingItem.text = allItems[i].text;
+                buildingItem.action = allItems[i].action;
+
+                buildingItem.button = ($("<button> " + buildingItem.text + "  Cost: " + buildingItem.cost + "</button>")).appendTo(target);
+
+                buildingItem.button.on('click', function(){
+                        if (score >= buildingItem.cost){
+                            buildingItem.action();
+                            score -= buildingItem.cost;
+                        }
+                });
+
+                if (allItems[i].hide) buildingItem.button.hide();
+
+                return buildingItem;
+            }
+            this.items[allItems[i].name] = makeItem();
+        }
+    },
+};
+
+
+var itemList = [
+    {name: "BGM on", text: "Turn on BGM.", cost: 50000, action: function(){
+                bgm.play();
+                shop.toggleItem('BGM on', false);
+                shop.toggleItem('BGM off', true);
+                localStorage['bgm-on'] = true;
+                }
+    },
+    {name: "BGM off", text: "Turn off BGM.", cost: 500000, hide: true, action: function(){
+                bgm.pause();
+                shop.toggleItem('BGM off', false);
+                shop.toggleItem('BGM on', true);
+                delete localStorage['bgm-on'];
+                }
+    },
+];
+
+shop.init(itemList);
+loadSettings();
+})();
+
+</script>
+
+
+</body>
+</html>

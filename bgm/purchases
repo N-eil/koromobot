@@ -1,0 +1,21 @@
+
+    {name: "nipaa", text: "Nipaa~", cost: 1000, hide: true, action: function(){
+                $('#se')[0].src = 'se/nipaa.mp3';
+                $('#se')[0].play();
+                }
+    },
+    {name: "patchi", text: "Patchy?", cost: 1700, hide: true, action: function(){
+                $('#se')[0].src = 'se/patchi.mp3';
+                $('#se')[0].play();
+                }
+    },
+    {name: "dlanor", text: "Engrish", cost: 2300, hide: true, action: function(){
+                $('#se')[0].src = 'se/diethedeath.mp3';
+                $('#se')[0].play();
+                }
+    },
+    {name: "gokigenyo", text: "Shipbutts", cost: 3000, hide: true, action: function(){
+                $('#se')[0].src = 'se/gokigenyo.mp3';
+                $('#se')[0].play();
+                }
+    },
