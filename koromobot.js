@@ -1,5 +1,6 @@
+var fs = require('fs');
 var WHATDOREGEX = /wh?at (\w+)$/;
-var PASSWORD = 'nope';
+var PASSWORD = fs.readFileSync('password.txt').toString().replace(/\n$/, '');
 // Bot config
 var config = {
     server: "irc.rizon.net",
@@ -107,7 +108,6 @@ var repl = require("repl");
 var moment = require("moment");
 var _ = require('underscore');
 var app = require('http').createServer(handler);
-var fs = require('fs');
 var url = require('url');
 var Contest = require('./Contest.js');
 
