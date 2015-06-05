@@ -29,11 +29,6 @@ var allowedPaths = [
     "/bgm/glider.mp3",
     "/bgm/stampede.mp3",
     "/bgm/giovanni.mp3",
-
-    "/se/nipaa.mp3",
-    "/se/patchi.mp3",
-    "/se/diethedeath.mp3",
-    "/se/gokigenyo.mp3",
 ];
 
 var admins = ['AyaIsMyBirdu', 'Patchypatchy', 'DKPL', 'neil|uni', 'neil|worku'];
